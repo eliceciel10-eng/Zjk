@@ -931,11 +931,17 @@ function pickCol(el){document.querySelectorAll('.co').forEach(c=>c.classList.rem
 function updPrev(){const n=document.getElementById('r-naam').value||'?';const a=document.getElementById('r-anaam').value||'';const el=document.getElementById('av-prev');el.style.background=selColor;el.textContent=(n[0]+(a[0]||'')).toUpperCase()}
 function doRegister(){
   const naam=document.getElementById('r-naam').value.trim();
+  const anaam=document.getElementById('r-anaam').value.trim();
   const type=document.getElementById('r-type').value;
   const stad=document.getElementById('r-stad').value;
   const bio=document.getElementById('r-bio').value.trim();
-  if(!naam||!type||!stad||!bio){toast('❌ Vul naam, type, stad en bio in.');return}
-  if(!regSvcs.length){toast('❌ Voeg minimaal 1 dienst toe.');return}
+  
+  // Show exactly what is missing
+  if(!naam){toast('❌ Vul je voornaam in.');return}
+  if(!type){toast('❌ Kies je type kapper (man/vrouw/unisex).');return}
+  if(!stad){toast('❌ Kies je stad.');return}
+  if(!bio){toast('❌ Schrijf iets over jezelf in het "Over jou" veld.');return}
+  if(!regSvcs.length){toast('❌ Voeg minimaal 1 dienst toe via de diensten sectie.');return}
   const nb={id:'b'+Date.now(),naam,anaam:document.getElementById('r-anaam').value,titel:document.getElementById('r-titel').value||naam+' · '+stad,type,stad,bio,services:regSvcs,kleur:selColor,tel:document.getElementById('r-tel').value,insta:document.getElementById('r-insta').value,rating:5.0,reviews:0,badge:'Nieuw',media:[...regMedia],bookings:[]};
   barbers.push(nb);DB.s('barbers',barbers);regSvcs=[];renderSvcList();
   doFilter();updStats();renderReviews();
