@@ -242,6 +242,17 @@ body{background:var(--bg);color:var(--white);font-family:'DM Sans',sans-serif;ov
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--gold);color:#000;padding:.85rem 1.3rem;font-weight:700;font-size:.77rem;letter-spacing:1px;z-index:9999;transform:translateY(150%);transition:.4s cubic-bezier(.34,1.56,.64,1);max-width:280px;line-height:1.5}
 .toast.show{transform:translateY(0)}
 
+/* LOGIN */
+.login-wrap{max-width:420px;margin:0 auto}
+.login-tabs{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border)}
+.login-tab{flex:1;padding:.7rem;font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:center;cursor:pointer;transition:.2s;background:transparent;color:var(--gray);border:none}
+.login-tab.active{background:var(--gold);color:#000}
+.login-form{display:none}.login-form.active{display:block}
+.logged-in-bar{display:none;align-items:center;gap:.8rem;padding:.5rem 1rem;background:var(--gold3);border:1px solid rgba(212,168,67,.25);margin-bottom:1.5rem;flex-wrap:wrap}
+.logged-in-bar.show{display:flex}
+.logged-in-bar span{font-size:.8rem;color:var(--white);flex:1}
+.logged-in-bar strong{color:var(--gold)}
+
 /* FOOTER */
 footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 5%}
 .ft{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:1.8rem}
@@ -276,8 +287,13 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
     <li><a href="#registreer">Kapper Worden</a></li>
     <li><a href="#admin">Admin</a></li>
   </ul>
-  <div class="nav-acts">
-    <button class="btn btn-o btn-sm" onclick="goTo('#registreer')">Registreer</button>
+  <div id="nav-user" style="display:none;align-items:center;gap:.5rem;font-size:.75rem;color:var(--gray)">
+    <span id="nav-user-name" style="color:var(--gold);font-weight:600"></span>
+    <button class="btn btn-o btn-sm" onclick="openMyKdash()">📊 Mijn Dashboard</button>
+    <button class="btn btn-o btn-sm" onclick="doLogout()">Uitloggen</button>
+  </div>
+  <div class="nav-acts" id="nav-login-btns">
+    <button class="btn btn-o btn-sm" onclick="openLoginModal()">Inloggen</button>
     <button class="btn btn-g btn-sm" onclick="goTo('#zoeken')">Vind Kapper</button>
     <button class="hmbg" onclick="toggleNav()"><span></span><span></span><span></span></button>
   </div>
@@ -422,6 +438,14 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
         </div>
         <div class="av-prev" id="av-prev" style="background:#d4a843">EL</div>
       </div>
+      <div class="fg" style="background:rgba(212,168,67,.05);border:1px solid rgba(212,168,67,.15);padding:1rem;margin-bottom:.5rem">
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem">🔐 ACCOUNT AANMAKEN</div>
+        <div class="fr2">
+          <div class="fg" style="margin-bottom:.6rem"><label>Email</label><input type="email" id="r-email" placeholder="jouw@email.nl"></div>
+          <div class="fg" style="margin-bottom:.6rem"><label>Wachtwoord</label><input type="password" id="r-ww" placeholder="Min. 6 tekens"></div>
+        </div>
+        <p style="font-size:.68rem;color:var(--gray2)">Met dit account log je altijd in om je dashboard te zien.</p>
+      </div>
       <button class="fsub" onclick="doRegister()">✦ PROFIEL AANMAKEN — GRATIS</button>
     </div>
   </div>
@@ -553,7 +577,10 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
   <div class="k-dash">
     <button class="modal-x" onclick="closeKd()">✕</button>
     <h3 id="kd-title" style="font-family:'Bebas Neue',sans-serif;font-size:1.55rem;letter-spacing:1px;margin-bottom:.2rem"></h3>
-    <p style="color:var(--gray);font-size:.76rem;margin-bottom:1.3rem">Persoonlijk dashboard</p>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem;flex-wrap:wrap;gap:.5rem">
+      <p style="color:var(--gray);font-size:.76rem">Persoonlijk dashboard</p>
+      <button class="btn btn-o btn-sm" onclick="openAccount()">⚙️ Account Instellingen</button>
+    </div>
     <div class="k-kpis">
       <div class="k-kpi"><div class="k-kpi-n" id="kd-bk">0</div><div class="k-kpi-l">Boekingen</div></div>
       <div class="k-kpi"><div class="k-kpi-n" id="kd-rev">€0</div><div class="k-kpi-l">Totale omzet</div></div>
@@ -607,6 +634,42 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
     <button class="modal-x" onclick="closeGallery()">✕</button>
     <h3 id="gallery-title" style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:1.2rem"></h3>
     <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem"></div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="overlay" id="login-ov">
+  <div class="modal" style="max-width:420px">
+    <button class="modal-x" onclick="closeLoginModal()">✕</button>
+    <h3>INLOGGEN</h3>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchTab('login')">Inloggen</button>
+      <button class="login-tab" onclick="switchTab('forgot')">Wachtwoord Vergeten</button>
+    </div>
+    <div class="login-form active" id="tab-login">
+      <div class="fg"><label>Email</label><input type="email" id="l-email" placeholder="jouw@email.nl"></div>
+      <div class="fg"><label>Wachtwoord</label><input type="password" id="l-ww" placeholder="Jouw wachtwoord"></div>
+      <button class="fsub" onclick="doLogin()">✦ INLOGGEN</button>
+    </div>
+    <div class="login-form" id="tab-forgot">
+      <p style="font-size:.82rem;color:var(--gray);margin-bottom:1rem;line-height:1.7">Vul je email in. We zoeken je account op en je kan een nieuw wachtwoord instellen.</p>
+      <div class="fg"><label>Email</label><input type="email" id="f-email" placeholder="jouw@email.nl"></div>
+      <button class="fsub" onclick="doForgot()">✦ WACHTWOORD RESETTEN</button>
+      <div id="forgot-out" style="margin-top:.8rem;font-size:.78rem;color:var(--green);display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT INSTELLINGEN MODAL -->
+<div class="overlay" id="account-ov">
+  <div class="modal" style="max-width:460px">
+    <button class="modal-x" onclick="closeAccount()">✕</button>
+    <h3>ACCOUNT INSTELLINGEN</h3>
+    <p style="font-size:.78rem;color:var(--gray);margin-bottom:1.5rem">Pas je inloggegevens aan.</p>
+    <div class="fg"><label>Nieuwe Email</label><input type="email" id="ac-email" placeholder="Nieuwe email adres"></div>
+    <div class="fg"><label>Nieuw Wachtwoord</label><input type="password" id="ac-ww" placeholder="Nieuw wachtwoord (min. 6 tekens)"></div>
+    <div class="fg"><label>Huidig Wachtwoord (verplicht)</label><input type="password" id="ac-huidig" placeholder="Jouw huidige wachtwoord"></div>
+    <button class="fsub" onclick="saveAccount()">✦ OPSLAAN</button>
   </div>
 </div>
 
@@ -845,6 +908,14 @@ function submitBk(){
 // ══════════════ KAPPER DASHBOARD ══════════════
 function openKd(id){
   const b=barbers.find(x=>x.id===id);if(!b)return;
+  // Check if user is allowed to see this dashboard
+  if(currentUser){
+    if(currentUser.barberId!==id){toast('❌ Je kan alleen je eigen dashboard zien.');return}
+  } else {
+    // Not logged in - show login modal
+    toast('❌ Log eerst in om je dashboard te zien.');
+    openLoginModal();return;
+  }
   activeKd=b;uploadedMedia=b.media?[...b.media]:[];
   document.getElementById('kd-title').textContent=b.naam+' '+b.anaam+' — Dashboard';
   const bks=bookings.filter(x=>x.barberId===id);
@@ -1007,11 +1078,24 @@ function doRegister(){
   if(!stad){toast('❌ Kies je stad.');return}
   if(!bio){toast('❌ Schrijf iets over jezelf in het "Over jou" veld.');return}
   if(!regSvcs.length){toast('❌ Voeg minimaal 1 dienst toe via de diensten sectie.');return}
+  const email=document.getElementById('r-email').value.trim().toLowerCase();
+  const ww=document.getElementById('r-ww').value;
+  if(!email){toast('❌ Vul een email in voor je account.');return}
+  if(!ww||ww.length<6){toast('❌ Kies een wachtwoord van min. 6 tekens.');return}
+  const accounts=DB.l('accounts',[]);
+  if(accounts.find(a=>a.email===email)){toast('❌ Dit email is al in gebruik. Probeer in te loggen.');return}
   const nb={id:'b'+Date.now(),naam,anaam:document.getElementById('r-anaam').value,titel:document.getElementById('r-titel').value||naam+' · '+stad,type,stad,bio,services:regSvcs,kleur:selColor,tel:document.getElementById('r-tel').value,insta:document.getElementById('r-insta').value,rating:5.0,reviews:0,badge:'Nieuw',media:[...regMedia],bookings:[]};
   barbers.push(nb);DB.s('barbers',barbers);regSvcs=[];renderSvcList();
+  // Save account
+  accounts.push({barberId:nb.id,email,ww:hashWW(ww),naam:nb.naam+' '+nb.anaam});
+  DB.s('accounts',accounts);
+  // Auto login
+  currentUser={barberId:nb.id,email,naam:nb.naam+' '+nb.anaam};
+  DB.s('session',currentUser);
+  updateNavUser();
   doFilter();updStats();renderReviews();
   showWelcome(nb);
-  ['r-naam','r-anaam','r-titel','r-tel','r-insta','r-bio'].forEach(id=>document.getElementById(id).value='');regMedia=[];renderRegThumbs();
+  ['r-naam','r-anaam','r-titel','r-tel','r-insta','r-bio','r-email','r-ww'].forEach(id=>document.getElementById(id).value='');regMedia=[];renderRegThumbs();
   document.getElementById('r-type').value='';document.getElementById('r-stad').value='';
   goTo('#zoeken');
 }
@@ -1214,8 +1298,130 @@ function toggleNav(){
 }
 
 // ══════════════ INIT ══════════════
+// ══════════════ AUTH SYSTEEM ══════════════
+let currentUser=null; // {barberId, email, naam}
+
+function hashWW(ww){
+  // Simple hash for storage (not cryptographic but works for this use case)
+  let h=0;for(let i=0;i<ww.length;i++){h=((h<<5)-h)+ww.charCodeAt(i);h|=0;}return h.toString(36);
+}
+
+function openLoginModal(){document.getElementById('login-ov').classList.add('open')}
+function closeLoginModal(){document.getElementById('login-ov').classList.remove('open')}
+function switchTab(tab){
+  document.querySelectorAll('.login-tab').forEach((t,i)=>t.classList.toggle('active',i===(tab==='login'?0:1)));
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-forgot').classList.toggle('active',tab==='forgot');
+}
+
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim().toLowerCase();
+  const ww=document.getElementById('l-ww').value;
+  if(!email||!ww){toast('❌ Vul email en wachtwoord in.');return}
+  const accounts=DB.l('accounts',[]);
+  const acc=accounts.find(a=>a.email===email);
+  if(!acc){toast('❌ Geen account gevonden met dit email.');return}
+  if(acc.ww!==hashWW(ww)){toast('❌ Wachtwoord klopt niet.');return}
+  currentUser={barberId:acc.barberId,email:acc.email,naam:acc.naam};
+  DB.s('session',currentUser);
+  closeLoginModal();
+  updateNavUser();
+  toast('✅ Welkom terug, '+acc.naam+'!');
+  setTimeout(()=>openKd(acc.barberId),400);
+}
+
+function doLogout(){
+  currentUser=null;
+  DB.s('session',null);
+  updateNavUser();
+  toast('👋 Uitgelogd.');
+}
+
+function doForgot(){
+  const email=document.getElementById('f-email').value.trim().toLowerCase();
+  if(!email){toast('❌ Vul je email in.');return}
+  const accounts=DB.l('accounts',[]);
+  const acc=accounts.find(a=>a.email===email);
+  const out=document.getElementById('forgot-out');
+  out.style.display='block';
+  if(!acc){out.style.color='var(--red)';out.textContent='❌ Geen account gevonden met dit email.';return}
+  // Show temp password reset option
+  out.style.color='var(--green)';
+  out.innerHTML='✅ Account gevonden voor <strong>'+acc.naam+'</strong>.<br><br>Nieuw wachtwoord instellen:<br>';
+  const inp=document.createElement('input');
+  inp.type='password';inp.placeholder='Nieuw wachtwoord';
+  inp.style.cssText='width:100%;background:var(--dark);border:1px solid var(--border);color:var(--white);padding:.6rem;font-family:DM Sans,sans-serif;font-size:.85rem;outline:none;margin-top:.5rem';
+  const btn=document.createElement('button');
+  btn.className='btn btn-g btn-sm';btn.style.marginTop='.5rem';btn.style.width='100%';
+  btn.textContent='Wachtwoord Opslaan';
+  btn.onclick=()=>{
+    if(inp.value.length<6){toast('❌ Min. 6 tekens');return}
+    acc.ww=hashWW(inp.value);
+    DB.s('accounts',accounts);
+    out.innerHTML='✅ Wachtwoord gewijzigd! Je kan nu inloggen.';
+    setTimeout(()=>switchTab('login'),1500);
+  };
+  out.appendChild(inp);out.appendChild(btn);
+}
+
+function openAccount(){
+  if(!currentUser){toast('❌ Je bent niet ingelogd.');return}
+  document.getElementById('ac-email').value=currentUser.email;
+  document.getElementById('ac-ww').value='';
+  document.getElementById('ac-huidig').value='';
+  document.getElementById('account-ov').classList.add('open');
+}
+function closeAccount(){document.getElementById('account-ov').classList.remove('open')}
+
+function saveAccount(){
+  const nieuwEmail=document.getElementById('ac-email').value.trim().toLowerCase();
+  const nieuwWW=document.getElementById('ac-ww').value;
+  const huidigWW=document.getElementById('ac-huidig').value;
+  if(!huidigWW){toast('❌ Vul je huidige wachtwoord in.');return}
+  const accounts=DB.l('accounts',[]);
+  const acc=accounts.find(a=>a.barberId===currentUser.barberId);
+  if(!acc||acc.ww!==hashWW(huidigWW)){toast('❌ Huidig wachtwoord klopt niet.');return}
+  if(nieuwEmail&&nieuwEmail!==acc.email){
+    if(accounts.find(a=>a.email===nieuwEmail&&a.barberId!==acc.barberId)){toast('❌ Dit email is al in gebruik.');return}
+    acc.email=nieuwEmail;currentUser.email=nieuwEmail;
+  }
+  if(nieuwWW){
+    if(nieuwWW.length<6){toast('❌ Wachtwoord min. 6 tekens.');return}
+    acc.ww=hashWW(nieuwWW);
+  }
+  DB.s('accounts',accounts);
+  DB.s('session',currentUser);
+  closeAccount();
+  toast('✅ Account bijgewerkt!');
+}
+
+function updateNavUser(){
+  const navUser=document.getElementById('nav-user');
+  const navBtns=document.getElementById('nav-login-btns');
+  if(currentUser){
+    document.getElementById('nav-user-name').textContent=currentUser.naam;
+    navUser.style.display='flex';
+    navBtns.style.display='none';
+  } else {
+    navUser.style.display='none';
+    navBtns.style.display='flex';
+  }
+}
+
+function openMyKdash(){
+  if(currentUser)openKd(currentUser.barberId);
+}
+
+function checkSession(){
+  const sess=DB.l('session',null);
+  if(sess&&sess.barberId){
+    const b=barbers.find(x=>x.id===sess.barberId);
+    if(b){currentUser=sess;updateNavUser();}
+  }
+}
+
 window.addEventListener('load',()=>{
-  renderStory();doFilter();renderReviews();updStats();checkDirectLink();
+  renderStory();doFilter();renderReviews();updStats();checkDirectLink();checkSession();
 });
 </script>
 </body>
