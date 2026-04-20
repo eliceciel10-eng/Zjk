@@ -1087,7 +1087,7 @@ function delThumb(i){uploadedMedia.splice(i,1);renderThumbs()}
 let regMedia=[];
 function handleRegUpload(e){
   [...e.target.files].slice(0,6-regMedia.length).forEach(f=>{
-    if(regMedia.length>=6){toast('❌ Maximum 6 foto\'s');return}
+    if(regMedia.length>=6){toast('❌ Maximum 6 fotos');return}
     const rd=new FileReader();
     rd.onload=ev=>{regMedia.push(ev.target.result);renderRegThumbs()};
     rd.readAsDataURL(f);
@@ -1095,8 +1095,12 @@ function handleRegUpload(e){
 }
 function renderRegThumbs(){
   const c=document.getElementById('reg-thumbs');if(!c)return;
-  c.innerHTML=regMedia.map((s,i)=>`<div class="m-thumb"><img src="${s}" alt=""><div class="m-del" onclick="delRegThumb(${i})">✕</div></div>`).join('');
-  document.getElementById('reg-upload-zone').querySelector('p').innerHTML=regMedia.length>=6?'✅ Maximum bereikt (6 foto\'s)':'📸 Nog ${6-regMedia.length} foto\'s toevoegen';
+  c.innerHTML=regMedia.map((s,i)=>'<div class="m-thumb"><img src="'+s+'" alt=""><div class="m-del" onclick="delRegThumb('+i+')">✕</div></div>').join('');
+  const zone=document.getElementById('reg-upload-zone');
+  if(zone){
+    const p=zone.querySelector('p');
+    if(p)p.innerHTML=regMedia.length>=6?'✅ Maximum bereikt (6 fotos)':'📸 Nog '+(6-regMedia.length)+' fotos toevoegen';
+  }
 }
 function delRegThumb(i){regMedia.splice(i,1);renderRegThumbs()}
 
@@ -1448,15 +1452,16 @@ function renderAgenda(barberId){
   el.innerHTML=DAGEN.map((dag,i)=>{
     const key=DAGEN_SHORT[i];
     const d=agenda[key]||{open:false,van:'09:00',tot:'18:00'};
-    return`<div class="dag-row">
-      <span class="dag-naam">${dag}</span>
-      <label class="dag-toggle"><input type="checkbox" id="dag-${key}" ${d.open?'checked':''} onchange="toggleDag('${key}')"><span class="dag-slider"></span></label>
-      <div class="dag-times" id="dag-times-${key}" style="${d.open?'':'opacity:.35;pointer-events:none'}">
-        <input type="time" id="dag-van-${key}" value="${d.van}">
-        <span>tot</span>
-        <input type="time" id="dag-tot-${key}" value="${d.tot}">
-      </div>
-    </div>`;
+    const chk=d.open?'checked':'';
+    const opac=d.open?'':'opacity:.35;pointer-events:none';
+    return '<div class="dag-row">'
+      +'<span class="dag-naam">'+dag+'</span>'
+      +'<label class="dag-toggle"><input type="checkbox" id="dag-'+key+'" '+chk+' onchange="toggleDag(''+key+'')"><span class="dag-slider"></span></label>'
+      +'<div class="dag-times" id="dag-times-'+key+'" style="'+opac+'">'
+      +'<input type="time" id="dag-van-'+key+'" value="'+d.van+'">'
+      +'<span>tot</span>'
+      +'<input type="time" id="dag-tot-'+key+'" value="'+d.tot+'">'
+      +'</div></div>';
   }).join('');
 }
 
@@ -1555,7 +1560,9 @@ function loadSlots(){
   
   el.innerHTML='<div class="slot-grid">'+slots.map(s=>{
     const isBlocked=bloks.some(b=>s>=b.van&&s<b.tot);
-    return`<div class="slot${isBlocked?' blocked':''}" onclick="${isBlocked?'':'selectSlot(this,''+s+'')'}" title="${isBlocked?'Geblokkeerd':s}">${isBlocked?'🚫':s}</div>`;
+    const cls='slot'+(isBlocked?' blocked':'');
+    const clk=isBlocked?'void(0)':'selectSlot(this,\''+s+'\')';
+    return '<div class="'+cls+'" onclick="'+clk+'" title="'+s+'">'+(isBlocked?'🚫':s)+'</div>';
   }).join('')+'</div>';
   updateHerhalingInfo();
 }
