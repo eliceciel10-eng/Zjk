@@ -343,7 +343,7 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
       <h2>HET IDEE<br>ACHTER ZJK</h2>
       <p id="sp1"></p><p id="sp2"></p><p id="sp3"></p>
       <div class="story-sig" id="s-sig"></div>
-      <button class="btn btn-o btn-sm" style="margin-top:1.5rem" onclick="openStoryEdit()">✏️ Verhaal Bewerken</button>
+      <!-- Verhaal bewerken alleen via admin dashboard -->
     </div>
     <div class="story-card">
       <div class="s-stat"><div class="s-stat-n" id="sv-k">0</div><div class="s-stat-l">Kappers op het platform</div></div>
@@ -460,6 +460,11 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
           <div class="dash-card" style="margin-bottom:1.1rem">
             <h3>📊 FINANCIËN</h3>
             <div id="adm-fin"></div>
+          </div>
+          <div class="dash-card" style="margin-bottom:1.1rem">
+            <h3>✏️ VERHAAL BEWERKEN</h3>
+            <p style="font-size:.78rem;color:var(--gray);margin-bottom:.9rem">Pas het verhaal op de homepage aan.</p>
+            <button class="btn btn-g btn-sm" style="width:100%;justify-content:center" onclick="openStoryEdit()">✏️ Verhaal Aanpassen</button>
           </div>
           <div class="dash-card">
             <h3>🤖 AI ANALYSE</h3>
@@ -598,6 +603,62 @@ footer{background:var(--dark);border-top:1px solid var(--border);padding:2.8rem 
     <button class="modal-x" onclick="closeGallery()">✕</button>
     <h3 id="gallery-title" style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;margin-bottom:1.2rem"></h3>
     <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem"></div>
+  </div>
+</div>
+
+<!-- WELCOME MODAL (after registration) -->
+<div class="overlay" id="welcome-ov">
+  <div style="background:var(--card);border:1px solid var(--border);padding:2.5rem;max-width:560px;width:100%;position:relative;text-align:center">
+    <div style="font-size:3rem;margin-bottom:1rem">🎉</div>
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:2px;color:var(--gold);margin-bottom:.5rem">WELKOM OP ZJK!</h3>
+    <p id="wlc-name" style="font-size:1rem;color:var(--white);margin-bottom:.4rem;font-weight:600"></p>
+    <p style="font-size:.85rem;color:var(--gray);line-height:1.8;margin-bottom:1.5rem">Jouw profiel staat nu live! Klanten kunnen je vinden en boekingen maken. Hieronder vind je alles wat je nodig hebt.</p>
+    
+    <div style="background:var(--dark);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;text-align:left">
+      <div style="font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem">🔗 JOUW PERSOONLIJKE BOEKINGSLINK</div>
+      <div style="display:flex;gap:.6rem;align-items:center">
+        <div id="wlc-link" style="flex:1;background:var(--card2);border:1px solid var(--border2);padding:.6rem .8rem;font-size:.75rem;color:var(--white);word-break:break-all;line-height:1.5"></div>
+        <button class="btn btn-g btn-sm" onclick="copyWlcLink()" style="flex-shrink:0">📋 Kopieer</button>
+      </div>
+      <p style="font-size:.7rem;color:var(--gray2);margin-top:.5rem">Deel deze link op Instagram, TikTok en WhatsApp. Klanten klikken en boeken direct bij jou!</p>
+    </div>
+
+    <div style="background:var(--dark);border:1px solid var(--border);padding:1.2rem;margin-bottom:1rem;text-align:left">
+      <div style="font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem">📱 INSTALLEER ALS APP</div>
+      <p style="font-size:.78rem;color:var(--gray);margin-bottom:.7rem;line-height:1.6">Voeg ZJK toe aan je homescreen zodat je altijd snel je agenda, boekingen en financiën kan zien.</p>
+      <div style="font-size:.75rem;color:var(--white);line-height:2">
+        <div>📱 <strong>iPhone:</strong> Safari → Deel knop → "Zet op beginscherm"</div>
+        <div>🤖 <strong>Android:</strong> Chrome → ⋮ menu → "Toevoegen aan startscherm"</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.5rem">
+      <div style="background:var(--dark);border:1px solid var(--border);padding:1rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:.3rem">📅</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:.2rem">Afspraken</div>
+        <div style="font-size:.68rem;color:var(--gray)">Via jouw 📊 dashboard knop op je kaart</div>
+      </div>
+      <div style="background:var(--dark);border:1px solid var(--border);padding:1rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:.3rem">💶</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:.2rem">Boekhouding</div>
+        <div style="font-size:.68rem;color:var(--gray)">Omzet, BTW en belasting automatisch</div>
+      </div>
+      <div style="background:var(--dark);border:1px solid var(--border);padding:1rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:.3rem">🎬</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:.2rem">Content</div>
+        <div style="font-size:.68rem;color:var(--gray)">Upload foto → AI maakt je caption</div>
+      </div>
+      <div style="background:var(--dark);border:1px solid var(--border);padding:1rem;text-align:center">
+        <div style="font-size:1.4rem;margin-bottom:.3rem">⭐</div>
+        <div style="font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:.2rem">Reviews</div>
+        <div style="font-size:.68rem;color:var(--gray)">Klanten laten reviews achter</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-g" onclick="openMyDash()" style="padding:.8rem 2rem">📊 Open Mijn Dashboard</button>
+      <button class="btn btn-o" onclick="closeWelcome()" style="padding:.8rem 2rem">Later →</button>
+    </div>
   </div>
 </div>
 
@@ -945,7 +1006,7 @@ function doRegister(){
   const nb={id:'b'+Date.now(),naam,anaam:document.getElementById('r-anaam').value,titel:document.getElementById('r-titel').value||naam+' · '+stad,type,stad,bio,services:regSvcs,kleur:selColor,tel:document.getElementById('r-tel').value,insta:document.getElementById('r-insta').value,rating:5.0,reviews:0,badge:'Nieuw',media:[...regMedia],bookings:[]};
   barbers.push(nb);DB.s('barbers',barbers);regSvcs=[];renderSvcList();
   doFilter();updStats();renderReviews();
-  toast(`🎉 ${naam} staat nu live op ZJK!`);
+  showWelcome(nb);
   ['r-naam','r-anaam','r-titel','r-tel','r-insta','r-bio'].forEach(id=>document.getElementById(id).value='');regMedia=[];renderRegThumbs();
   document.getElementById('r-type').value='';document.getElementById('r-stad').value='';
   goTo('#zoeken');
@@ -1031,6 +1092,29 @@ function openFullImg(src){
   document.body.appendChild(ov);
 }
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4200)}
+
+let welcomeBarber=null;
+function showWelcome(b){
+  welcomeBarber=b;
+  document.getElementById('wlc-name').textContent='Welkom, '+b.naam+' '+b.anaam+'! 👋';
+  const link=window.location.origin+window.location.pathname+'?kapper='+b.id;
+  document.getElementById('wlc-link').textContent=link;
+  document.getElementById('welcome-ov').classList.add('open');
+}
+function closeWelcome(){document.getElementById('welcome-ov').classList.remove('open')}
+function copyWlcLink(){
+  const link=document.getElementById('wlc-link').textContent;
+  navigator.clipboard.writeText(link).then(()=>toast('🔗 Link gekopieerd!')).catch(()=>prompt('Kopieer:',link));
+}
+function openMyDash(){
+  closeWelcome();
+  if(welcomeBarber){
+    setTimeout(()=>{
+      doFilter();
+      setTimeout(()=>openKd(welcomeBarber.id),300);
+    },200);
+  }
+}
 
 function copyBookingLink(id,e){
   e.stopPropagation();
